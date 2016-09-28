@@ -19,14 +19,19 @@ User have to login to use the backup service. If the user doesn't exist in the s
 
 ### Backup
 User can create profile(s) and choose which folders/files that user want to backup and exclude.
-Include: /home/ubuntu/backup, /home/test, /var/sys/log
-Exclude: .ssh, /home/ubuntu/exclude, /var/sys/sensitive, .gitignore, *.dmg
+
+User can specify folders/files that they want to backup
+e.g. Include: /home/ubuntu/backup, /home/test, /var/sys/log
+
+User can specify folders/files that they don't want to backup
+e.g. Exclude: .ssh, /home/ubuntu/exclude, /var/sys/sensitive, .gitignore, *.dmg
 
 After the profile is created, user can press backup button to run the backup process.
 
 Important things to take note:
 * The solution have to be able to differentiate the new files and updated/changed files (e.g. 1st backup, we backup 10 new files. 2nd backup, we backup 1 new files, and 4 files has been changed.)
 * The solution have to be able to track the backup history. (e.g. 1st backup, content of file a is "1234". 2nd backup, content of file a is became "123456789")
+* The solution have to be able to track the file information (file permission, group id, owner id, modified time, etc)
 
 ### Browse all folders/files that has been backed up
 After the backup process completed, user have to be able to browse/see all folders/files that has been backed up.
