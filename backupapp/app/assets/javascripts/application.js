@@ -13,5 +13,26 @@
 //= require jquery
 //= require jquery_ujs
 //= require turbolinks
-//= require prefixfree.min.js
+//= require prefixfree.min
+//= require bootstrap.min
+//= require chart.min
+//= require easypiechart
+//= require bootstrap-datepicker
 //= require_tree .
+
+
+$(document).ready(function(){
+	$(".notification").on("click", function(){
+		$(this).parent().fadeOut(function(){
+			$(this).parent().remove();	
+		});		
+	});
+});
+	
+	
+	
+	
+	
+	
+	
+

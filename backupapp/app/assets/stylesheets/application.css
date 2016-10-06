@@ -12,7 +12,10 @@
  *
  *= require_tree .
  *= require_self
- *= reset
- *= style
+ *= bootstrap.min
+ *= bootstrap-table
+ *= bootstrap-theme.min
+ *= datepicker
+ *= styles
  *= prefixfree
  */
