@@ -1,0 +1,33 @@
+  <%= devise_error_messages! %>
+  <% if !flash.empty? %>
+    <div id="flash"> 
+      <% flash.each do |key, value| %>
+        <%= content_tag :div, value, class: "flash #{key}" %>
+      <% end %>   
+    </div>
+  <% end %>
+
+<div id="login">
+  <%= form_for(resource, as: resource_name, url: session_path(resource_name)) do |f| %>
+    <div class="field_container">
+      <%= f.email_field :email, autofocus: true, placeholder: "Email Address" %>
+    </div>
+    <div class="field_container">      
+      <%= f.password_field :password, autocomplete: "off", placeholder: "Password" %>
+    </div>
+
+    <div class="field_container">
+      <button id="sign_in_button" type="submit">
+        <span class="button_text">Sign In</span>
+      </button>      
+    </div>
+    
+    <div id="sign_in_options" class="field_container">
+      <div id="sign_in_alternatives_container">
+        <span id="google_sign_in_option">
+          <%= link_to "sign up", new_user_registration_path, id: "google_sign_in", class: "login_link"%>
+        </span>
+      </div>        
+    </div>
+  <% end %>
+</div>        
