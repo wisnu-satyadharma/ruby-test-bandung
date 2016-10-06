@@ -26,6 +26,7 @@ $(document).ready(function(){
 		$(this).parent().fadeOut(function(){
 			$(this).parent().remove();	
 		});		
+		return false;
 	});
 });
 	
