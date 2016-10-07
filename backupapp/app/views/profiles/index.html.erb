@@ -43,7 +43,13 @@
 						        <td><%= profile.name%></td>
 						        <td><%= profile.directory%></td>
 						        <td><%= profile.exclusion%></td>
-						        <td></td>
+						        <td>
+											<a href="<%= edit_profile_path(profile)%>">
+							        	<svg class="glyph stroked pencil action_icon">
+							        		<use xlink:href="#stroked-pencil"/>
+							        	</svg>
+											</a>
+						        </td>
 						    	</tr>				    					    		
 				    		<% end %>
 				    	<% end %>

@@ -1,4 +1,6 @@
 class ProfilesController < ApplicationController
+  before_action :get_profile, only: [:edit, :update]
+
   def index
   	@profiles = current_user.profiles
   end
@@ -16,10 +18,26 @@ class ProfilesController < ApplicationController
     	flash[:alert] = "Profile Failed to Create, #{@profile.errors.full_messages.join(",")}"
       render :new
     end
+  end
 
+  def edit
+  end
+
+  def update    
+    if @profile.update_attributes(profile_params)
+      redirect_to profiles_path, notice: 'Profile was successfully updated.'
+    else
+      flash[:alert] = "Profile failed to update, #{@profile.errors.full_messages.join(",")}"
+      render :edit
+    end
   end
 
   protected
+
+  def get_profile
+    @profile = Profile.find_by(id: params[:id])  
+  end
+
   def profile_params
     params.require(:profile).permit(:user_id, :name, :directory, :exclusion)
   end
