@@ -28,6 +28,16 @@ $(document).ready(function(){
 		});		
 		return false;
 	});
+
+	$(".confirmation_dialog").on("click", function(){
+		if (confirm('Are you sure ?')) {
+       return true;
+    }else{
+    	return false;
+    }		
+	});
+
+
 });
 	
 	

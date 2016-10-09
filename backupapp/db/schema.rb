@@ -10,10 +10,37 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema.define(version: 20161006050236) do
+ActiveRecord::Schema.define(version: 20161007112141) do
 
   # These are extensions that must be enabled in order to support this database
   enable_extension "plpgsql"
+
+  create_table "attachments", force: :cascade do |t|
+    t.integer  "document_id"
+    t.integer  "file_size"
+    t.integer  "object_type"
+    t.integer  "parent_id"
+    t.datetime "created_at",        null: false
+    t.datetime "updated_at",        null: false
+    t.string   "file_file_name"
+    t.string   "file_content_type"
+    t.integer  "file_file_size"
+    t.datetime "file_updated_at"
+    t.index ["document_id"], name: "index_attachments_on_document_id", using: :btree
+  end
+
+  create_table "documents", force: :cascade do |t|
+    t.integer  "profile_id"
+    t.integer  "file_number"
+    t.integer  "file_size"
+    t.float    "upload_progress"
+    t.integer  "status"
+    t.integer  "version"
+    t.datetime "backup_date"
+    t.datetime "created_at",      null: false
+    t.datetime "updated_at",      null: false
+    t.index ["profile_id"], name: "index_documents_on_profile_id", using: :btree
+  end
 
   create_table "profiles", force: :cascade do |t|
     t.integer  "user_id"
@@ -22,6 +49,7 @@ ActiveRecord::Schema.define(version: 20161006050236) do
     t.string   "exclusion"
     t.datetime "created_at", null: false
     t.datetime "updated_at", null: false
+    t.string   "document"
     t.index ["user_id"], name: "index_profiles_on_user_id", using: :btree
   end
 

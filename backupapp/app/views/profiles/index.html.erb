@@ -40,15 +40,27 @@
 				    	<% if @profiles.present? %>
 				    		<% @profiles.each do |profile|%>
 						    	<tr>
-						        <td><%= profile.name%></td>
+						        <td><%= link_to profile.name, profile_path(profile) %></td>
 						        <td><%= profile.directory%></td>
 						        <td><%= profile.exclusion%></td>
 						        <td>
-											<a href="<%= edit_profile_path(profile)%>">
-							        	<svg class="glyph stroked pencil action_icon">
-							        		<use xlink:href="#stroked-pencil"/>
-							        	</svg>
-											</a>
+						        	<span class="action_item">
+												<a href="<%= edit_profile_path(profile)%>">
+								        	<svg class="glyph stroked pencil action_icon">
+								        		<use xlink:href="#stroked-pencil"/>
+								        	</svg>
+												</a>
+											</span>
+
+											<span class="action_item">
+												<%= form_tag backup_now_profile_path(profile) do %>
+													<button type="submit" class="confirmation_dialog">
+														<svg class="glyph stroked external hard drive action_icon">
+															<use xlink:href="#stroked-external-hard-drive"/>
+														</svg>
+													</button>												
+												<% end %>
+											</span>
 						        </td>
 						    	</tr>				    					    		
 				    		<% end %>

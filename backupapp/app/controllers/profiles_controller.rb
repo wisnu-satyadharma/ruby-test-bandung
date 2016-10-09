@@ -1,7 +1,11 @@
 class ProfilesController < ApplicationController
-  before_action :get_profile, only: [:edit, :update]
+  before_action :get_profile, only: [:edit, :update, :backup_now, :show]
 
-  def index
+  def show
+    
+  end
+
+  def index    
   	@profiles = current_user.profiles
   end
 
@@ -30,6 +34,16 @@ class ProfilesController < ApplicationController
       flash[:alert] = "Profile failed to update, #{@profile.errors.full_messages.join(",")}"
       render :edit
     end
+  end
+
+  def backup_now
+    if File.exists?(@profile.directory)
+      flash[:notice] = 'Please wait! Backup process finish soon.'
+      @profile.backup_now!       
+    else
+      flash[:alert] = 'Backup process failed to start, please check your directory.'      
+    end    
+    redirect_to profiles_path
   end
 
   protected
