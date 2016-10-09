@@ -18,6 +18,7 @@
 //= require chart.min
 //= require easypiechart
 //= require bootstrap-datepicker
+//= require jquery.easytree.min
 //= require_tree .
 
 
@@ -35,6 +36,11 @@ $(document).ready(function(){
     }else{
     	return false;
     }		
+	});
+
+	$(".easytree-title a").on("click", function(){
+		$.ajax({url: $(this).attr("href"),dataType:"script"});		
+		return false;
 	});
 
 

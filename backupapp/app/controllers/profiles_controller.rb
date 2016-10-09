@@ -2,7 +2,11 @@ class ProfilesController < ApplicationController
   before_action :get_profile, only: [:edit, :update, :backup_now, :show]
 
   def show
-    
+    if params[:document_id].present?
+      @document = Document.find_by(id: params[:document_id])
+    else
+      @document = @profile.documents.order("version desc").first
+    end
   end
 
   def index    
@@ -38,8 +42,8 @@ class ProfilesController < ApplicationController
 
   def backup_now
     if File.exists?(@profile.directory)
-      flash[:notice] = 'Please wait! Backup process finish soon.'
-      @profile.backup_now!       
+      @profile.backup_now!
+      flash[:notice] = 'Please wait! Backup process finish soon.'      
     else
       flash[:alert] = 'Backup process failed to start, please check your directory.'      
     end    

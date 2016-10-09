@@ -941,6 +941,15 @@ h1.page-header {
 	margin: 2px 5px ;
 }
 
+.text-align-left{
+	text-align: left;
+}
+
+#file_contain{
+	white-space: pre-wrap;
+	text-align: left;
+}
+
 
 
 

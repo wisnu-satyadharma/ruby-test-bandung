@@ -14,6 +14,7 @@ class RequestFile
       elsif File.directory?(File.join(path,file))
         current_attachment.object_type = Attachment.object_types["directory"]
         current_attachment.parent_id = parent_id
+        current_attachment.item_file_name = File.basename(File.join(path,file))
         current_attachment.save
         RequestFile.process_backup(File.join(path,file), document_id, current_attachment.id)
       end       
