@@ -7,6 +7,7 @@ class ProfilesController < ApplicationController
     else
       @document = @profile.documents.order("version desc").first
     end
+    @documents_options = @profile.documents.order("version asc")
   end
 
   def index    

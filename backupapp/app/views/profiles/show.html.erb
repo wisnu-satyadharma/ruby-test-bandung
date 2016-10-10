@@ -21,10 +21,12 @@
 			<div class="col-md-12">
 				<div class="panel panel-default">
 					<div class="panel-heading text-align-left">
-						<svg class="glyph stroked clipboard with paper">
-							<use xlink:href="#stroked-clipboard-with-paper"/>
-						</svg>
-						Details
+						<%= form_tag(profile_path(@profile), method: :get) do%>
+							<% if @documents_options.present? %>
+								<%= select_tag "document_id", options_from_collection_for_select(@documents_options, "id", "backup_date", params["document_id"]) %>
+								<%= submit_tag%>
+							<% end%>							
+						<% end %>
 					</div>
 					<div class="panel-body">	
 						<div class="col-md-3">
