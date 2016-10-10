@@ -4,9 +4,9 @@ class Profile < ApplicationRecord
 
 	validates :name, presence: true
 	validates :directory, presence: true
+	before_save :remove_white_space
 
 	def backup_now!
-		#check latest document
 		if self.documents.blank?
 			current_document = self.documents.create(status: Document.statuses["in_progress"], version: 1, backup_date: Time.now)
 		else
@@ -18,5 +18,12 @@ class Profile < ApplicationRecord
 		current_document.update_column(:file_number, file_number)
 		current_document.update_column(:file_size, file_size)
 		RequestFile.process_backup(self.directory, current_document.id)
+	end
+
+	protected
+
+	def remove_white_space
+		self.exclusion = self.exclusion.gsub(" ","").gsub("\n","").gsub("\r","") if self.exclusion.present?
+		self.directory = self.directory.gsub(" ","").gsub("\n","").gsub("\r","") if self.directory.present?
 	end
 end

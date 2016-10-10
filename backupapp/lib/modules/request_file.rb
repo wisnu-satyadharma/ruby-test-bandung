@@ -1,17 +1,20 @@
 class RequestFile
   def self.process_backup path, document_id, parent_id=nil
     document = Document.find_by(id: document_id)
+    exclusions = RequestFile.determine_exclusion(document.profile_id)
     Dir.new(path).each do |file|       
       next if file[0] == "." || file == "." || file == ".."
       current_attachment = document.attachments.new
-
-      if File.file?(File.join(path,file))        
+      if File.file?(File.join(path,file))     
+        next if RequestFile.exclude?(document.profile_id, file, path, exclusions)           
+        current_attachment.file_path = File.join(path,file)
         current_attachment.file_size=File.size(File.join(path,file))
         current_attachment.object_type = Attachment.object_types["file"]
         current_attachment.parent_id = parent_id
         current_attachment.item = File.open(File.join(path,file))
         current_attachment.save
-      elsif File.directory?(File.join(path,file))
+      elsif File.directory?(File.join(path,file)) 
+        current_attachment.file_path = File.join(path,file)
         current_attachment.object_type = Attachment.object_types["directory"]
         current_attachment.parent_id = parent_id
         current_attachment.item_file_name = File.basename(File.join(path,file))
@@ -19,6 +22,132 @@ class RequestFile
         RequestFile.process_backup(File.join(path,file), document_id, current_attachment.id)
       end       
     end    
+  end
+
+  def self.exclude?(profile_id, file, path, exclusions)
+    status = false
+    profile = Profile.find_by(id: profile_id)
+
+    #path_exclusion    
+    if exclusions[:path_exclusion].present?
+      exclusions[:path_exclusion].each do |path_exclusion|
+        path_exclusion_path = File.join(profile.directory, path_exclusion)
+        status = true if File.join(path,file).include?(path_exclusion_path)
+      end
+    end
+
+    #file_exclusion
+    if exclusions[:file_exclusion].present?
+      exclusions[:file_exclusion].each do |file_exclusion|
+        path_file_exclusion = File.join(profile.directory, file_exclusion)
+        status = true if File.join(path,file).include?(path_file_exclusion)
+      end
+    end
+
+    #path_and_filename_exclusion
+    if exclusions[:path_and_filename_exclusion].present?
+      exclusions[:path_and_filename_exclusion].each do |path_and_filename_exclusion|
+        path_and_filename_exclusion = File.join(profile.directory, path_and_filename_exclusion)
+        status = true if File.join(path,file).include?(path_and_filename_exclusion)
+      end
+    end
+
+    #extension_exclusion
+    if exclusions[:extension_exclusion].present?
+      exclusions[:extension_exclusion].each do |extension_exclusion|
+        if path == profile.directory && file.split(".").last == extension_exclusion.split(".").last
+          status = true
+        end                
+      end
+    end
+
+    #path_and_extension_exclusion
+    if exclusions[:path_and_extension_exclusion].present?
+      exclusions[:path_and_extension_exclusion].each do |path_and_extension_exclusion|
+        exclusion_full_path = File.join(profile.directory, path_and_extension_exclusion)
+        exclusion_path = exclusion_full_path.split("/").take(exclusion_full_path.split("/").size-1).join("/")
+        exclusion_filename = exclusion_full_path.split("/").last
+        exclusion_extension = exclusion_filename.split(".").last
+        file_extension = file.split(".").last
+        if path.include?(exclusion_path) && exclusion_extension == file_extension
+          status = true
+        end
+      end
+    end
+
+
+    return status
+  end
+
+  def self.path_exclusion profile_id
+    profile = Profile.find_by(id: profile_id)
+    exclusions = profile.exclusion if profile.present?
+    return [] if exclusions.blank?
+    criteria = []
+    exclusions = exclusions.split(",")
+    exclusions.each do |exclusion|
+      criteria << exclusion if exclusion[-1] == "/" && exclusion.exclude?("*")
+    end
+    criteria
+  end
+
+  def self.filename_exclusion profile_id
+    profile = Profile.find_by(id: profile_id)
+    exclusions = profile.exclusion if profile.present?
+    return [] if exclusions.blank?
+    criteria = []
+    exclusions = exclusions.split(",")
+    exclusions.each do |exclusion|
+      criteria << exclusion if exclusion.exclude?("/") && exclusion.include?(".") && exclusion.exclude?("*")
+    end
+    criteria    
+  end
+
+  def self.path_and_filenname_exclusion profile_id
+    profile = Profile.find_by(id: profile_id)
+    exclusions = profile.exclusion if profile.present?
+    return [] if exclusions.blank?
+    criteria = []
+    exclusions = exclusions.split(",")
+    exclusions.each do |exclusion|
+      criteria << exclusion if exclusion.include?("/") && exclusion.split("/").last.include?(".") && exclusion.split("/").last.exclude?("*")
+    end
+    criteria        
+  end
+
+  def self.extension_exclusion profile_id
+    profile = Profile.find_by(id: profile_id)
+    exclusions = profile.exclusion if profile.present?
+    return [] if exclusions.blank?
+    criteria = []
+    exclusions = exclusions.split(",")
+    exclusions.each do |exclusion|
+      criteria << exclusion if exclusion.exclude?("/") && exclusion.include?(".") && exclusion.include?("*")
+    end
+    criteria        
+  end
+
+  def self.path_and_extension_exclusion profile_id
+    profile = Profile.find_by(id: profile_id)
+    exclusions = profile.exclusion if profile.present?
+    return [] if exclusions.blank?
+    criteria = []
+    exclusions = exclusions.split(",")
+    exclusions.each do |exclusion|
+      criteria << exclusion if exclusion.include?("/") && exclusion.split("/").last.include?(".") && exclusion.split("/").last.include?("*")
+    end
+    criteria        
+    
+  end
+
+  def self.determine_exclusion profile_id
+    determined_exclusions = {}    
+    determined_exclusions[:path_exclusion] = RequestFile.path_exclusion(profile_id)    
+    determined_exclusions[:file_exclusion] = RequestFile.filename_exclusion(profile_id)    
+    determined_exclusions[:path_and_filename_exclusion] = RequestFile.path_and_filenname_exclusion(profile_id)
+    determined_exclusions[:extension_exclusion] = RequestFile.extension_exclusion(profile_id)
+    determined_exclusions[:path_and_extension_exclusion] = RequestFile.path_and_extension_exclusion(profile_id)    
+    determined_exclusions
   end
 
   def self.calculating_file path

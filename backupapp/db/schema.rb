@@ -10,7 +10,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema.define(version: 20161007112141) do
+ActiveRecord::Schema.define(version: 20161010044453) do
 
   # These are extensions that must be enabled in order to support this database
   enable_extension "plpgsql"
@@ -26,6 +26,8 @@ ActiveRecord::Schema.define(version: 20161007112141) do
     t.string   "item_content_type"
     t.integer  "item_file_size"
     t.datetime "item_updated_at"
+    t.string   "file_path"
+    t.string   "status"
     t.index ["document_id"], name: "index_attachments_on_document_id", using: :btree
   end
 
