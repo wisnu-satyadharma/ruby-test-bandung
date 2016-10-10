@@ -945,10 +945,21 @@ h1.page-header {
 	text-align: left;
 }
 
-#file_contain{
+.file_contain{
 	white-space: pre-wrap;
 	text-align: left;
 }
+
+del.diffmod{
+  background-color: red;
+  margin: 0px 3px;
+}
+
+ins.diffmod{
+  background-color: #89b363;
+  margin: 0px 3px;
+}
+
 
 
 

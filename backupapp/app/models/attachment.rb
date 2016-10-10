@@ -4,6 +4,7 @@ class Attachment < ApplicationRecord
 	has_many :children, :class_name => 'Attachment', :foreign_key => :parent_id
 
 	enum object_type: { file: 0, directory: 1 }
+	enum status: {added: 0, modified: 1}
 	has_attached_file :item
 	do_not_validate_attachment_file_type :item
 	

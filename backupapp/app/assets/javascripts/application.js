@@ -15,6 +15,7 @@
 //= require turbolinks
 //= require prefixfree.min
 //= require bootstrap.min
+//= require jquery-ui.min
 //= require chart.min
 //= require easypiechart
 //= require bootstrap-datepicker

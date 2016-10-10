@@ -9,6 +9,7 @@ Rails.application.routes.draw do
   resources :attachments, only: [:index] do
   	member do
   		get :show_contain
+      get :show_different
   	end
   end
 

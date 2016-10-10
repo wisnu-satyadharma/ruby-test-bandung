@@ -27,7 +27,7 @@ ActiveRecord::Schema.define(version: 20161010044453) do
     t.integer  "item_file_size"
     t.datetime "item_updated_at"
     t.string   "file_path"
-    t.string   "status"
+    t.integer  "status"
     t.index ["document_id"], name: "index_attachments_on_document_id", using: :btree
   end
 

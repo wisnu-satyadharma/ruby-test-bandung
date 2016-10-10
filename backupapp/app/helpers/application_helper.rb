@@ -1,4 +1,8 @@
 module ApplicationHelper
+	def profile_size(profile)
+		profile.documents.sum(&:file_size).to_i
+	end
+
 	def class_alert(type)
 		case type
 		when "notice"

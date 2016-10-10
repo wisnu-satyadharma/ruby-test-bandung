@@ -15,6 +15,9 @@
  *= bootstrap.min
  *= bootstrap-table
  *= bootstrap-theme.min
+ *= jquery-ui.min
+ *= jquery-ui.structure.min
+ *= jquery-ui.theme.min
  *= datepicker
  *= styles
  *= prefixfree

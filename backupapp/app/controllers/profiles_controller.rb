@@ -8,6 +8,11 @@ class ProfilesController < ApplicationController
       @document = @profile.documents.order("version desc").first
     end
     @documents_options = @profile.documents.order("version asc")
+
+    if @document.present?
+      @new_files = @document.attachments.where(status: Attachment.statuses["added"])
+      @modified_files = @document.attachments.where(status: Attachment.statuses["modified"])
+    end
   end
 
   def index    

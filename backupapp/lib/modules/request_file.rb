@@ -12,16 +12,31 @@ class RequestFile
         current_attachment.object_type = Attachment.object_types["file"]
         current_attachment.parent_id = parent_id
         current_attachment.item = File.open(File.join(path,file))
+        current_attachment.status = RequestFile.define_status(document.profile_id, document.id, File.join(path,file))
         current_attachment.save
       elsif File.directory?(File.join(path,file)) 
         current_attachment.file_path = File.join(path,file)
         current_attachment.object_type = Attachment.object_types["directory"]
         current_attachment.parent_id = parent_id
         current_attachment.item_file_name = File.basename(File.join(path,file))
+        current_attachment.status = RequestFile.define_status(document.profile_id, document.id, File.join(path,file))
         current_attachment.save
         RequestFile.process_backup(File.join(path,file), document_id, current_attachment.id)
       end       
     end    
+  end
+
+  def self.define_status profile_id, document_id, path
+    document = Document.find_by(id: document_id)
+    prev_file = Attachment.joins(:document =>[:profile]).where("profiles.id =? and documents.version = ? and attachments.file_path = ?", profile_id, document.version-1, path).first
+    if prev_file.blank?
+      return Attachment.statuses["added"]
+    end
+
+    return nil if File.directory?(path)
+    if File.open(path).read != Paperclip.io_adapters.for(prev_file.item).read
+      Attachment.statuses["modified"]
+    end
   end
 
   def self.exclude?(profile_id, file, path, exclusions)
