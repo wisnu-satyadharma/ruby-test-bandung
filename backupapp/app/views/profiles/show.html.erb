@@ -94,7 +94,7 @@
 														<%if @modified_files.present? %>
 															<% @modified_files.each do |new_file| %>
 																<li>
-																	<%= link_to new_file.item_file_name, show_different_attachment_path(new_file), remote:true %>
+																	<%= link_to new_file.item_file_name, show_different_attachment_path(new_file), remote:true, class: "ajax_loading" %>
 																</li>
 															<% end %>
 														<% end %>
@@ -116,13 +116,15 @@
 			</div><!--/.col-->			
 		</div><!--/.row-->
 </div>	<!--/.main-->
-<script>
-  $( function() {
-    $( "#tabs" ).tabs();
-    $( "#progressbar" ).progressbar({
-      value: <%= profile_size(@profile) * 100 / 1000000000%>
-    });
-  } );
+<%= content_for :js_extra do %>
+	<script>
+	  $( function() {
+	    $( "#tabs" ).tabs();
+	    $( "#progressbar" ).progressbar({
+	      value: <%= profile_size(@profile) * 100 / 1000000000%>
+	    });
+	  } );
 
-    $('#demo1_menu').easytree();
-</script>
+	    $('#demo1_menu').easytree();
+	</script>
+<% end %>

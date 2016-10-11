@@ -77,15 +77,17 @@
 		</div>
 	</div><!--/.row-->			
 </div>	<!--/.main-->
-<script>
-  $( function() {    
-		$( ".upload_progress" ).each(function(){
-			var _that = $(this);
-       $(this).progressbar({
-          value: parseInt(_that.attr("value"))
-       });
-    });    
-  } );
-    
-</script>
+<%= content_for :js_extra do%>
+	<script>
+	  $( function() {    
+			$( ".upload_progress" ).each(function(){
+				var _that = $(this);
+	       $(this).progressbar({
+	          value: parseInt(_that.attr("value"))
+	       });
+	    });    
+	  } );
+	    
+	</script>
+<% end %>
 

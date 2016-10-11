@@ -1,5 +1,7 @@
 <% if @attachment.item_content_type.include?("image") %>
 	$(".file_contain:visible").html("<%=j image_tag @attachment.item.url %>")
-<% else %>
+<% elsif @attachment.item_content_type.include?("text")%>
 	$(".file_contain:visible").html("<%=j (Paperclip.io_adapters.for(@attachment.item).read) %>")
+<% else %>		
+		$(".file_contain:visible").html("File not support to show on this apps")
 <% end  %>

@@ -39,7 +39,13 @@ $(document).ready(function(){
     }		
 	});
 
+	$(".ajax_loading").on("click", function(){
+		$(".file_contain:visible").html("<img src='/assets/loading.gif' />");		
+	});
+	
+
 	$(".easytree-title a").on("click", function(){
+		$(".file_contain:visible").html("<img src='/assets/loading.gif' />");
 		$.ajax({url: $(this).attr("href"),dataType:"script"});		
 		return false;
 	});
