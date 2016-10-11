@@ -1,1 +1,5 @@
-$(".file_contain:visible").html("<%=j (Paperclip.io_adapters.for(@attachment.item).read) %>")
+<% if @attachment.item_content_type.include?("image") %>
+	$(".file_contain:visible").html("<%=j image_tag @attachment.item.url %>")
+<% else %>
+	$(".file_contain:visible").html("<%=j (Paperclip.io_adapters.for(@attachment.item).read) %>")
+<% end  %>

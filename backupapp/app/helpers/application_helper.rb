@@ -1,6 +1,6 @@
 module ApplicationHelper
 	def profile_size(profile)
-		profile.documents.sum(&:file_size).to_i
+		profile.documents.collect(&:file_size).compact.sum.to_i
 	end
 
 	def class_alert(type)

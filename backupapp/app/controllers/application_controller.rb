@@ -10,7 +10,7 @@ class ApplicationController < ActionController::Base
     @total_profile_count = Profile.joins(:user).where(user_id: current_user.id).count
     @total_files_count =Attachment.joins(:document => [:profile => [:user]]).where("users.id = ?",current_user.id).count
     @total_user_count = User.count
-    @total_user_storage = Filesize.from("#{Document.joins(:profile =>[:user]).where("users.id = ?",current_user.id).sum(&:file_size)} B").pretty 
+    @total_user_storage = Filesize.from("#{Document.joins(:profile =>[:user]).where("users.id = ?",current_user.id).collect(&:file_size).compact.sum} B").pretty 
   end
 
   protected

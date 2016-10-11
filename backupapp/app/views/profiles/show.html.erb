@@ -14,9 +14,10 @@
 	<div class="row">
 		<div class="col-lg-12">
 			<h1 class="page-header"><%= @profile.name%></h1>
-			<div class="col-lg-6">
+			<div class="col-lg-12">
 				<%= Filesize.from("#{profile_size(@profile)} B").pretty %> of 1GB
 				<div id="progressbar"></div>
+				<br/>
 			</div>
 			
 		</div>

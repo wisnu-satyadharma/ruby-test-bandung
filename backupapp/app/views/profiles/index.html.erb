@@ -43,24 +43,29 @@
 						        <td><%= link_to profile.name, profile_path(profile) %></td>
 						        <td><%= profile.directory%></td>
 						        <td><%= profile.exclusion%></td>
-						        <td>
-						        	<span class="action_item">
-												<a href="<%= edit_profile_path(profile)%>">
-								        	<svg class="glyph stroked pencil action_icon">
-								        		<use xlink:href="#stroked-pencil"/>
-								        	</svg>
-												</a>
-											</span>
+						        <td>						        	
+					        		<% if profile.has_process_backup? %>
+					        			<%= "#{profile.backup_progress.to_i} %" %>
+					        			<div class="upload_progress" value=<%= profile.backup_progress.to_i%> ></div>
+					        		<% else %>
+						        		<span class="action_item">
+													<a href="<%= edit_profile_path(profile)%>">
+									        	<svg class="glyph stroked pencil action_icon">
+									        		<use xlink:href="#stroked-pencil"/>
+									        	</svg>
+													</a>
+												</span>
 
-											<span class="action_item">
-												<%= form_tag backup_now_profile_path(profile) do %>
-													<button type="submit" class="confirmation_dialog">
-														<svg class="glyph stroked external hard drive action_icon">
-															<use xlink:href="#stroked-external-hard-drive"/>
-														</svg>
-													</button>												
-												<% end %>
-											</span>
+												<span class="action_item">
+													<%= form_tag backup_now_profile_path(profile) do %>
+														<button type="submit" class="confirmation_dialog">
+															<svg class="glyph stroked external hard drive action_icon">
+																<use xlink:href="#stroked-external-hard-drive"/>
+															</svg>
+														</button>												
+													<% end %>
+												</span>						        		
+					        		<% end %>
 						        </td>
 						    	</tr>				    					    		
 				    		<% end %>
@@ -70,8 +75,17 @@
 				</div>
 			</div>
 		</div>
-	</div><!--/.row-->	
-
-
-		
+	</div><!--/.row-->			
 </div>	<!--/.main-->
+<script>
+  $( function() {    
+		$( ".upload_progress" ).each(function(){
+			var _that = $(this);
+       $(this).progressbar({
+          value: parseInt(_that.attr("value"))
+       });
+    });    
+  } );
+    
+</script>
+

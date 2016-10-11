@@ -3,10 +3,11 @@ class RequestFile
     document = Document.find_by(id: document_id)
     exclusions = RequestFile.determine_exclusion(document.profile_id)
     Dir.new(path).each do |file|       
-      next if file[0] == "." || file == "." || file == ".."
+      document.reload
+      next if file[0] == "." || file == "." || file == ".."      
       current_attachment = document.attachments.new
       if File.file?(File.join(path,file))     
-        next if RequestFile.exclude?(document.profile_id, file, path, exclusions)           
+        next if RequestFile.exclude?(document.profile_id, file, path, exclusions)
         current_attachment.file_path = File.join(path,file)
         current_attachment.file_size=File.size(File.join(path,file))
         current_attachment.object_type = Attachment.object_types["file"]
@@ -23,7 +24,7 @@ class RequestFile
         current_attachment.save
         RequestFile.process_backup(File.join(path,file), document_id, current_attachment.id)
       end       
-    end    
+    end        
   end
 
   def self.define_status profile_id, document_id, path
@@ -94,12 +95,20 @@ class RequestFile
     return status
   end
 
-  def self.path_exclusion profile_id
+  def self.profile_exclusions profile_id
     profile = Profile.find_by(id: profile_id)
     exclusions = profile.exclusion if profile.present?
     return [] if exclusions.blank?
     criteria = []
     exclusions = exclusions.split(",")
+    return exclusions
+
+  end
+
+  def self.path_exclusion profile_id    
+    exclusions = RequestFile.profile_exclusions(profile_id)
+    return [] if exclusions.blank?
+    criteria = []
     exclusions.each do |exclusion|
       criteria << exclusion if exclusion[-1] == "/" && exclusion.exclude?("*")
     end
@@ -107,11 +116,9 @@ class RequestFile
   end
 
   def self.filename_exclusion profile_id
-    profile = Profile.find_by(id: profile_id)
-    exclusions = profile.exclusion if profile.present?
+    exclusions = RequestFile.profile_exclusions(profile_id)
     return [] if exclusions.blank?
     criteria = []
-    exclusions = exclusions.split(",")
     exclusions.each do |exclusion|
       criteria << exclusion if exclusion.exclude?("/") && exclusion.include?(".") && exclusion.exclude?("*")
     end
@@ -119,11 +126,9 @@ class RequestFile
   end
 
   def self.path_and_filenname_exclusion profile_id
-    profile = Profile.find_by(id: profile_id)
-    exclusions = profile.exclusion if profile.present?
+    exclusions = RequestFile.profile_exclusions(profile_id)
     return [] if exclusions.blank?
     criteria = []
-    exclusions = exclusions.split(",")
     exclusions.each do |exclusion|
       criteria << exclusion if exclusion.include?("/") && exclusion.split("/").last.include?(".") && exclusion.split("/").last.exclude?("*")
     end
@@ -131,11 +136,9 @@ class RequestFile
   end
 
   def self.extension_exclusion profile_id
-    profile = Profile.find_by(id: profile_id)
-    exclusions = profile.exclusion if profile.present?
+    exclusions = RequestFile.profile_exclusions(profile_id)
     return [] if exclusions.blank?
     criteria = []
-    exclusions = exclusions.split(",")
     exclusions.each do |exclusion|
       criteria << exclusion if exclusion.exclude?("/") && exclusion.include?(".") && exclusion.include?("*")
     end
@@ -143,11 +146,9 @@ class RequestFile
   end
 
   def self.path_and_extension_exclusion profile_id
-    profile = Profile.find_by(id: profile_id)
-    exclusions = profile.exclusion if profile.present?
+    exclusions = RequestFile.profile_exclusions(profile_id)
     return [] if exclusions.blank?
     criteria = []
-    exclusions = exclusions.split(",")
     exclusions.each do |exclusion|
       criteria << exclusion if exclusion.include?("/") && exclusion.split("/").last.include?(".") && exclusion.split("/").last.include?("*")
     end
@@ -165,20 +166,23 @@ class RequestFile
     determined_exclusions
   end
 
-  def self.calculating_file path
-    total_file = 0 
-    total_size = 0
+  def self.calculating_file path, profile_id
+    total_file = 0.0
+    total_size = 0.0    
+    exclusions = RequestFile.determine_exclusion(profile_id)
+
     Dir.new(path).each do |file|       
       next if file[0] == "." || file == "." || file == ".."      
-      if File.file?(File.join(path,file))
+      next if RequestFile.exclude?(profile_id, file, path, exclusions)
+      if File.file?(File.join(path,file))        
         total_file +=  1
-        total_size +=  File.size?(File.join(path,file))
+        total_size +=  File.size?(File.join(path,file)).to_f
       elsif File.directory?(File.join(path,file))
-        processing_total_file, processing_total_size = (RequestFile.calculating_file(File.join(path,file)))
-        total_file += processing_total_file
-        total_size += processing_total_size
+        processing_total_file, processing_total_size = (RequestFile.calculating_file(File.join(path,file), profile_id))
+        total_file +=  processing_total_file
+        total_size +=  processing_total_size
       end       
     end  
-    return total_file, total_size  
+    return total_file.to_f, total_size.to_f
   end
 end

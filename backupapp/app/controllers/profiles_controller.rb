@@ -48,7 +48,7 @@ class ProfilesController < ApplicationController
 
   def backup_now
     if File.exists?(@profile.directory)
-      @profile.backup_now!
+      @profile.delay.backup_now!
       flash[:notice] = 'Please wait! Backup process finish soon.'      
     else
       flash[:alert] = 'Backup process failed to start, please check your directory.'      
